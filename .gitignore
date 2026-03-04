@@ -1,0 +1,6 @@
+/.cache
+/.ninja_*
+/build
+/lib
+/bin
+/compile_commands.json

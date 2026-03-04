@@ -1,0 +1,46 @@
+cc = "$${CC:-$${cc:-$$(command -v gcc)}}"
+ar = "$${AR:-$$(command -v ar)}"
+cflags = -Isrc -std=c23 -Wall `pkg-config --cflags gtk4 gtk4-layer-shell-0`
+cflags_debug = $cflags -g -O0 -DDEBUG
+cflags_release = $cflags -O2 -march=native -DNDEBUG
+ldflags = -lpthread -flto `pkg-config --libs gtk4 gtk4-layer-shell-0`
+
+rule ccde
+  command = $cc $cflags_debug -o $out -c $in -MMD -MF $out.d
+  depfile = $out.d
+  deps = gcc
+  description = [CC | DEBUG] $out
+
+rule ccre
+  command = $cc $cflags_release -o $out -c $in -MMD -MF $out.d
+  depfile = $out.d
+  deps = gcc
+  description = [CC | RELEASE] $out
+
+rule ar
+  command = $ar rcs $out $in
+  description = [AR] $out
+
+rule link
+  command = $cc $ldflags -o $out $in
+  description = [LINK] $out
+
+build build/debug/Log.o: ccde src/Log.c
+build build/release/Log.o: ccre src/Log.c
+
+build build/debug/Option/Helpers.o: ccde src/Option/Helpers.c
+build build/release/Option/Helpers.o: ccre src/Option/Helpers.c
+build build/debug/Option/Parser.o: ccde src/Option/Parser.c
+build build/release/Option/Parser.o: ccre src/Option/Parser.c
+
+build lib/debug/liboption.a: ar build/debug/Log.o build/debug/Option/Helpers.o build/debug/Option/Parser.o
+build lib/release/liboption.a: ar build/release/Log.o build/release/Option/Helpers.o build/release/Option/Parser.o
+
+build build/debug/Window.o: ccde src/Window.c
+build build/release/Window.o: ccre src/Window.c
+
+build build/debug/main.o: ccde src/main.c
+build build/release/main.o: ccre src/main.c
+
+build bin/debug/main: link build/debug/Window.o build/debug/main.o lib/debug/liboption.a
+build bin/release/main: link build/release/Window.o build/release/main.o lib/release/liboption.a
