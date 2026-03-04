@@ -9,6 +9,7 @@ Built with GTK4 and the [gtk4-layer-shell](https://github.com/wmww/gtk4-layer-sh
 ## Preview
 
 Displays two lines of text anchored to the bottom-right corner of your screen:
+![Preview](assets/Preview.png "Preview")
 
 ---
 
