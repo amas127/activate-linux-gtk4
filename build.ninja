@@ -22,7 +22,7 @@ rule ar
   description = [AR] $out
 
 rule link
-  command = $cc $ldflags -o $out $in
+  command = $cc -o $out $in $ldflags
   description = [LINK] $out
 
 build build/debug/Log.o: ccde src/Log.c
