@@ -1,9 +1,12 @@
 #include <gtk/gtk.h>
 
+#include "Log.h"
 #include "Option/Option.h"
 #include "Window.h"
 
 int main(int argc, char *argv[]) {
+  setup_colorized_loglevel();
+
   auto opt = parse_option_from_cli(argc, argv);
   auto app = gtk_application_new("com.gtk4.my.activate.linux",
                                  G_APPLICATION_DEFAULT_FLAGS);
