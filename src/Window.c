@@ -1,5 +1,6 @@
 #include "Window.h"
 
+#include <cairo.h>
 #include <gtk4-layer-shell.h>
 
 #include "Option/Option.h"
@@ -13,6 +14,13 @@ static const char *const markup_fmtstr =
     "<span font_family=\"%s\" %s size=\"%ld\">%s</span>\n"
     "<span font_family=\"%s\" %s size=\"%ld\">%s</span>"
     "</span>";
+
+static void on_window_realize(GtkWidget *widget) {
+  auto surface = gtk_native_get_surface(GTK_NATIVE(widget));
+  auto empty_region = cairo_region_create();
+  gdk_surface_set_input_region(surface, empty_region);
+  cairo_region_destroy(empty_region);
+}
 
 void app_activate(GtkApplication *app, gpointer user_data) {
   auto popt = (const Option *)user_data;
@@ -68,5 +76,6 @@ void app_activate(GtkApplication *app, gpointer user_data) {
   g_free(markup);
 
   gtk_window_set_child(gwin, lab);
+  g_signal_connect(win, "realize", G_CALLBACK(on_window_realize), nullptr);
   gtk_window_present(gwin);
 }
